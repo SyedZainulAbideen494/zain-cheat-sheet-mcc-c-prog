@@ -115,7 +115,7 @@ const Title = styled.div`
 `;
 
 const Small = styled.div`
-  color: #94a3b8;
+  color: #e5e5e5ff;
   font-size: 0.85rem;
 `;
 
