@@ -21,117 +21,119 @@ const programs = [
 ];
 
 // -------------------- ANIMATIONS --------------------
-const fadeInUp = keyframes`
-  0% { opacity: 0; transform: translateY(15px); }
-  100% { opacity: 1; transform: translateY(0); }
+const fadeIn = keyframes`
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 `;
 
-const floatUp = keyframes`
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-5px); }
-  100% { transform: translateY(0px); }
+const hoverLift = keyframes`
+  from { transform: translateY(0); }
+  to { transform: translateY(-4px); }
 `;
 
 // -------------------- STYLED COMPONENTS --------------------
 const Container = styled.div`
-  padding: 50px 20px;
+  padding: 60px 24px;
   max-width: 1200px;
   margin: 0 auto;
-  font-family: 'Inter', 'Segoe UI', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "San Francisco";
   color: #e6eef8;
 `;
 
 const Header = styled.div`
   text-align: center;
-  margin-bottom: 50px;
+  margin-bottom: 70px;
 
   h1 {
-    font-size: 2.5rem;
+    font-size: 2.8rem;
     font-weight: 800;
-    background: linear-gradient(90deg, #4ade80, #06b6d4);
+    background: linear-gradient(90deg, #60a5fa, #34d399, #06b6d4);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
+    letter-spacing: -0.6px;
+    transition: letter-spacing 0.3s ease;
+  }
+
+  h1:hover {
+    letter-spacing: 0px; // subtle micro hover detail
   }
 
   p {
     color: #94a3b8;
-    font-size: 1rem;
+    font-size: 1.05rem;
   }
 `;
 
 const Grid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 24px;
+  gap: 28px;
 `;
 
 const Card = styled(Link)`
-  background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(12px); // glassmorphism effect
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(14px);
+  border-radius: 18px;
   padding: 26px 22px;
-  border-radius: 22px;
   text-decoration: none;
   color: #e6eef8;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
-  transition: all 0.35s ease;
-  animation: ${fadeInUp} 0.5s ease forwards;
-  font-family: 'Fira Code', monospace;
-  position: relative;
-  overflow: hidden;
+  justify-content: center;
+  animation: ${fadeIn} 0.6s ease forwards;
+  animation-delay: ${({ delay }) => delay || "0s"};
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+  transition: all 0.25s ease;
 
   &:hover {
-    transform: translateY(-10px) scale(1.03);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.35);
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.07);
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 14px 28px rgba(0,0,0,0.35);
   }
 
-  &::after {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(120deg, rgba(255,255,255,0.1), rgba(0,0,0,0));
-    transform: rotate(45deg);
-    transition: all 0.5s ease;
-    pointer-events: none;
-  }
-
-  &:hover::after {
-    top: -20%;
-    left: -20%;
+  &:active {
+    transform: scale(0.98); // micro press feedback
   }
 `;
 
 const Title = styled.div`
   font-weight: 700;
   font-size: 1.2rem;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
+  letter-spacing: -0.3px;
 `;
 
 const Small = styled.div`
-  color: #e5e5e5ff;
+  color: #cbd5e1;
   font-size: 0.85rem;
 `;
 
 const Footer = styled.div`
-  margin-top: 80px;
-  font-size: 0.85rem;
+  margin-top: 90px;
+  font-size: 0.9rem;
   color: #94a3b8;
   text-align: center;
 
   a {
-    color: #06b6d4;
+    color: #60a5fa;
     text-decoration: none;
     font-weight: 600;
+    position: relative;
 
-    &:hover {
-      text-decoration: underline;
+    &::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -2px;
+      width: 0%;
+      height: 2px;
+      background: #60a5fa;
+      transition: width 0.3s ease;
+    }
+
+    &:hover::after {
+      width: 100%; // subtle underline animation
     }
   }
 `;
@@ -142,19 +144,23 @@ export default function Dashboard() {
     <Container>
       <Header>
         <h1>Code Playground</h1>
-        <p>Select a program and start exploring.</p>
+        <p>Your C Lab programs, reimagined with style.</p>
       </Header>
 
       <Grid>
         {programs.map((p, idx) => (
-          <Card key={p.id} to={`/program/${p.id}`} style={{ animationDelay: `${idx * 0.05}s` }}>
-            <Small>{p.title}</Small>
+          <Card key={p.id} to={`/program/${p.id}`} delay={`${idx * 0.05}s`}>
+            <Title>{p.title}</Title>
+            <Small>Program #{p.id}</Small>
           </Card>
         ))}
       </Grid>
 
       <Footer>
-        Made by <a href="https://www.instagram.com/_zainn.27" target="_blank" rel="noreferrer">@_zainn.27</a>
+        Built with ❤️ by{" "}
+        <a href="https://www.instagram.com/_zainn.27" target="_blank" rel="noreferrer">
+          @_zainn.27
+        </a>
       </Footer>
     </Container>
   );
