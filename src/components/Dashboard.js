@@ -148,8 +148,7 @@ export default function Dashboard() {
       <Grid>
         {programs.map((p, idx) => (
           <Card key={p.id} to={`/program/${p.id}`} style={{ animationDelay: `${idx * 0.05}s` }}>
-            <Title>{p.title}</Title>
-            <Small>Program ID: {p.id}</Small>
+            <Small>{p.title}</Small>
           </Card>
         ))}
       </Grid>
