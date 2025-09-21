@@ -1,9 +1,8 @@
 const program16 = {
   id: 16,
-  title: "Program 16 - String Reverse",
+  title: "Program 16 - Student Report (Structures)",
   lang: "c",
   code: `// Lab Program 16: Demo on Structure
-// Lab Program 16: Demo on Structure
 #include <stdio.h>
 #include <string.h>
 
@@ -19,13 +18,13 @@ int main() {
     int n, i, total;
     float per;
 
-    printf("\nHow many students? ");
+    printf("\\nHow many students? ");
     scanf("%d", &n);
 
-    printf("\nEnter Student Details:\n");
+    printf("\\nEnter Student Details:\\n");
 
     for (i = 0; i < n; i++) {
-        printf("\nStudent %d\n", i + 1);
+        printf("\\nStudent %d\\n", i + 1);
 
         printf("Student ID: ");
         scanf("%d", &s[i].sid);
@@ -33,11 +32,11 @@ int main() {
 
         printf("Name: ");
         fgets(s[i].name, sizeof(s[i].name), stdin);
-        s[i].name[strcspn(s[i].name, "\n")] = 0;  // Remove trailing newline
+        s[i].name[strcspn(s[i].name, "\\n")] = 0;  // Remove trailing newline
 
         printf("Course: ");
         fgets(s[i].prog, sizeof(s[i].prog), stdin);
-        s[i].prog[strcspn(s[i].prog, "\n")] = 0;
+        s[i].prog[strcspn(s[i].prog, "\\n")] = 0;
 
         printf("C Programming Marks: ");
         scanf("%d", &s[i].s1);
@@ -50,24 +49,22 @@ int main() {
     }
 
     // Display results
-    printf("\nI BCA - A");
-    printf("\n------------------------------------------------------------");
-    printf("\nRegNo   Name               C-Prog  DBMS   DM     Total  %%");
-    printf("\n------------------------------------------------------------");
+    printf("\\nI BCA - A");
+    printf("\\n------------------------------------------------------------");
+    printf("\\nRegNo   Name               C-Prog  DBMS   DM     Total  %%");
+    printf("\\n------------------------------------------------------------");
 
     for (i = 0; i < n; i++) {
         total = s[i].s1 + s[i].s2 + s[i].s3;
         per = total / 3.0;
 
-        printf("\n%-7d %-18s %-7d %-6d %-6d %-6d %.2f",
+        printf("\\n%-7d %-18s %-7d %-6d %-6d %-6d %.2f",
                s[i].sid, s[i].name, s[i].s1, s[i].s2, s[i].s3, total, per);
     }
 
-    printf("\n------------------------------------------------------------\n");
+    printf("\\n------------------------------------------------------------\\n");
     return 0;
 }
-
-
 `
 };
 
