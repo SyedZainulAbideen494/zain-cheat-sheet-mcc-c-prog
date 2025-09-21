@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
 import SyntaxHighlighter from "react-syntax-highlighter";
@@ -19,7 +19,6 @@ import program14 from "../programs/program14";
 import program15 from "../programs/program15";
 import program16 from "../programs/program16";
 
-// Store all programs
 const allPrograms = {
   1: program1, 2: program2, 3: program3, 4: program4,
   5: program5, 6: program6, 7: program7, 8: program8,
@@ -105,34 +104,29 @@ const Button = styled.button`
   }
 `;
 
-const ModalOverlay = styled.div`
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.6);
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  padding: 20px;
-  animation: ${fadeIn} 0.3s ease;
-`;
-
-const Modal = styled.div`
-  background: #1a1a1a;
-  border-radius: 16px;
-  padding: 16px 20px;
-  color: #e6eef8;
-  font-size: 0.95rem;
-  animation: ${slideUp} 0.35s ease;
-  box-shadow: 0px 8px 24px rgba(0,0,0,0.3);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-`;
-
 const CodeWrapper = styled.div`
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0px 0px 20px rgba(0,0,0,0.4);
+`;
+
+// -------------------- TOAST --------------------
+const Toast = styled.div`
+  position: fixed;        // fixed to viewport
+  bottom: 550px;           // 20px from bottom
+  left: 50%;              // horizontally center
+  transform: translateX(-50%);
+  background: #1a1a1a;
+  border-radius: 16px;
+  padding: 12px 20px;
+  color: #e6eef8;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0px 4px 16px rgba(0,0,0,0.3);
+  animation: ${slideUp} 0.35s ease forwards;
+  z-index: 9999;          // above everything
 `;
 
 // -------------------- COMPONENT --------------------
@@ -141,6 +135,11 @@ export default function ProgramPage() {
   const prog = allPrograms[id];
   const [showModal, setShowModal] = useState(null); // "copied" or "downloaded"
   const navigate = useNavigate();
+
+  // Scroll to top whenever program changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [id]);
 
   if (!prog) return <p style={{ color: "#aaa" }}>Program not found.</p>;
 
@@ -172,7 +171,13 @@ export default function ProgramPage() {
         <Button onClick={copyCode}><FiCopy /> Copy</Button>
         <Button onClick={downloadFile}><FiDownload /> Download</Button>
       </Toolbar>
-
+      {/* Bottom toast/modal */}
+      {showModal && (
+        <Toast>
+          <FiCheck />
+          {showModal === "copied" ? "Copied to clipboard!" : "File downloaded!"}
+        </Toast>
+      )}
       <CodeWrapper>
         <SyntaxHighlighter
           language={prog.lang}
@@ -184,14 +189,7 @@ export default function ProgramPage() {
         </SyntaxHighlighter>
       </CodeWrapper>
 
-      {showModal && (
-        <ModalOverlay>
-          <Modal>
-            <FiCheck />
-            {showModal === "copied" ? "Copied to clipboard!" : "File downloaded!"}
-          </Modal>
-        </ModalOverlay>
-      )}
+
     </Container>
   );
 }
