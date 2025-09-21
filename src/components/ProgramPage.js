@@ -138,18 +138,9 @@ export default function ProgramPage() {
   const navigate = useNavigate();
 
   // Scroll to top whenever program changes
-useEffect(() => {
-  window.scrollTo(0, 0);
-
-  // Auto-copy program code when page loads
-  if (prog) {
-    navigator.clipboard.writeText(prog.code);
-    setShowModal("copied");
-    const timer = setTimeout(() => setShowModal(null), 2000);
-    return () => clearTimeout(timer);
-  }
-}, [id, prog]);
-
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [id]);
 
   if (!prog) return <p style={{ color: "#aaa" }}>Program not found.</p>;
 
