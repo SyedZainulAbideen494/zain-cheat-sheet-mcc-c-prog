@@ -28,7 +28,7 @@ export default function Navbar() {
       <Title>LabCodeBox</Title>
       <Info>
         Made by Syed Zain-ul Abideen •{" "}
-        <a href="https://instagram.com/yourinsta" target="_blank" rel="noreferrer" style={{ color: "#9fb7ff" }}>
+        <a href="https://instagram.com/_zainn.27" target="_blank" rel="noreferrer" style={{ color: "#9fb7ff" }}>
           Instagram
         </a>
       </Info>

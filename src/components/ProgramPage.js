@@ -5,13 +5,38 @@ import SyntaxHighlighter from "react-syntax-highlighter";
 import { tomorrowNight } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import { FiCopy, FiDownload, FiCheck } from "react-icons/fi";
 import program1 from "../programs/program1";
+import program2 from "../programs/program2";
+import program3 from "../programs/program3";
+import program4 from "../programs/program4";
+import program5 from "../programs/program5";
+import program6 from "../programs/program6";
+import program7 from "../programs/program7";
+import program8 from "../programs/program8";
+import program9 from "../programs/program9";
+import program11 from "../programs/program11";
 
 import program14 from "../programs/program14";
 import program15 from "../programs/program15";
 import program16 from "../programs/program16";
 
-// All programs stored here
-const allPrograms = { 14: program14, 15: program15, 16: program16 };
+// Store all programs in an object for easy access by ID
+const allPrograms = {
+  1: program1,
+  2: program2,
+  3: program3,
+  4: program4,
+  5: program5,
+  6: program6,
+  7: program7,
+  8: program8,
+  9: program9,
+  11: program11,
+  14: program14,
+  15: program15,
+  16: program16
+};
+
+
 
 // -------------------- ANIMATIONS --------------------
 const fadeIn = keyframes`
