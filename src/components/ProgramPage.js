@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { tomorrowNight } from "react-syntax-highlighter/dist/esm/styles/hljs";
-import { FiCopy, FiDownload, FiCheck } from "react-icons/fi";
+import { FiCopy, FiDownload, FiCheck, FiArrowLeft } from "react-icons/fi";
+
 import program1 from "../programs/program1";
 import program2 from "../programs/program2";
 import program3 from "../programs/program3";
@@ -14,29 +15,17 @@ import program7 from "../programs/program7";
 import program8 from "../programs/program8";
 import program9 from "../programs/program9";
 import program11 from "../programs/program11";
-
 import program14 from "../programs/program14";
 import program15 from "../programs/program15";
 import program16 from "../programs/program16";
 
-// Store all programs in an object for easy access by ID
+// Store all programs
 const allPrograms = {
-  1: program1,
-  2: program2,
-  3: program3,
-  4: program4,
-  5: program5,
-  6: program6,
-  7: program7,
-  8: program8,
-  9: program9,
-  11: program11,
-  14: program14,
-  15: program15,
+  1: program1, 2: program2, 3: program3, 4: program4,
+  5: program5, 6: program6, 7: program7, 8: program8,
+  9: program9, 11: program11, 14: program14, 15: program15,
   16: program16
 };
-
-
 
 // -------------------- ANIMATIONS --------------------
 const fadeIn = keyframes`
@@ -54,6 +43,29 @@ const Container = styled.div`
   margin-top: 40px;
   padding: 20px;
   animation: ${fadeIn} 0.6s ease;
+`;
+
+const BackButton = styled.button`
+  background: rgba(255,255,255,0.06);
+  color: #e6eef8;
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 6px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  margin-bottom: 20px;
+  transition: all 0.25s ease;
+
+  &:hover {
+    background: rgba(255,255,255,0.12);
+    transform: translateY(-2px);
+  }
+  &:active {
+    transform: scale(0.97);
+  }
 `;
 
 const Title = styled.h2`
@@ -128,6 +140,7 @@ export default function ProgramPage() {
   const { id } = useParams();
   const prog = allPrograms[id];
   const [showModal, setShowModal] = useState(null); // "copied" or "downloaded"
+  const navigate = useNavigate();
 
   if (!prog) return <p style={{ color: "#aaa" }}>Program not found.</p>;
 
@@ -149,6 +162,10 @@ export default function ProgramPage() {
 
   return (
     <Container>
+      <BackButton onClick={() => navigate(-1)}>
+        <FiArrowLeft /> Back
+      </BackButton>
+
       <Title>{prog.title}</Title>
 
       <Toolbar>
@@ -170,7 +187,8 @@ export default function ProgramPage() {
       {showModal && (
         <ModalOverlay>
           <Modal>
-            <FiCheck /> {showModal === "copied" ? "Copied to clipboard!" : "File downloaded!"}
+            <FiCheck />
+            {showModal === "copied" ? "Copied to clipboard!" : "File downloaded!"}
           </Modal>
         </ModalOverlay>
       )}
