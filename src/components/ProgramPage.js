@@ -113,7 +113,7 @@ const CodeWrapper = styled.div`
 // -------------------- TOAST --------------------
 const Toast = styled.div`
   position: fixed;        // fixed to viewport
-  bottom: 550px;           // 20px from bottom
+  top: 20px;              // 20px from the top
   left: 50%;              // horizontally center
   transform: translateX(-50%);
   background: #1a1a1a;
@@ -128,6 +128,7 @@ const Toast = styled.div`
   animation: ${slideUp} 0.35s ease forwards;
   z-index: 9999;          // above everything
 `;
+
 
 // -------------------- COMPONENT --------------------
 export default function ProgramPage() {
