@@ -4,6 +4,7 @@ import styled, { keyframes } from "styled-components";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { tomorrowNight } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import { FiCopy, FiDownload, FiCheck } from "react-icons/fi";
+import program1 from "../programs/program1";
 
 import program14 from "../programs/program14";
 import program15 from "../programs/program15";
