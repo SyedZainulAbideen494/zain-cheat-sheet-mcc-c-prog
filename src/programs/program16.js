@@ -3,6 +3,7 @@ const program16 = {
   title: "Program 16 - String Reverse",
   lang: "c",
   code: `// Lab Program 16: Demo on Structure
+// Lab Program 16: Demo on Structure
 #include <stdio.h>
 #include <string.h>
 
@@ -65,6 +66,7 @@ int main() {
     printf("\n------------------------------------------------------------\n");
     return 0;
 }
+
 
 `
 };
