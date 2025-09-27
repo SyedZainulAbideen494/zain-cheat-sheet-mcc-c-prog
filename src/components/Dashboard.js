@@ -14,10 +14,12 @@ import program11 from "../programs/program11";
 import program14 from "../programs/program14";
 import program15 from "../programs/program15";
 import program16 from "../programs/program16";
+import program17 from "../programs/program17";
+import program10 from "../programs/program10";
 
 const programs = [
   program1, program2, program3, program4, program5, program6,
-  program7, program8, program9, program11, program14, program15, program16
+  program7, program8, program9, program10, program11, program14, program15, program16, program17
 ];
 
 // -------------------- ANIMATIONS --------------------
