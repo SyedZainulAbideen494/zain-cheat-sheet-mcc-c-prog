@@ -17,11 +17,11 @@ GO
 
 -- Insert sample data
 INSERT INTO employee VALUES
-(1001, 'syed', 'sales', 65000),
+(1001, 'syed', 'sales', 150000),
 (1002, 'Zain', 'HR', 65000),
-(1003, 'Abideen', 'Marketing', 65000),
-(1004, 'Adil', 'IT', 65000),
-(1005, 'Sufiyan', 'IT services', 65000);
+(1003, 'Abideen', 'Marketing', 77000),
+(1004, 'Adil', 'IT', 265000),
+(1005, 'Sufiyan', 'IT services', 75000);
 GO
 
 -- Display all employees
