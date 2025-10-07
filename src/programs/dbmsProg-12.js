@@ -63,7 +63,7 @@ BEGIN
 
     FETCH NEXT FROM empdet INTO @empcode, @ename, @dname, @basicsalary;
 END
-n
+
 -- Close and deallocate cursor
 CLOSE empdet;
 DEALLOCATE empdet;
