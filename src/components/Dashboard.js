@@ -16,12 +16,15 @@ import program15 from "../programs/program15";
 import program16 from "../programs/program16";
 import program17 from "../programs/program17";
 import program10 from "../programs/program10";
+import program19 from "../programs/program19";
 import program31 from "../programs/dbmsProg-12";
 import program30 from "../programs/dbmsProg-11";
+import program20 from "../programs/program20";
+import program21 from "../programs/program21";
 
 const programs = [
   program1, program2, program3, program4, program5, program6,
-  program7, program8, program9, program10, program11, program14, program15, program16, program17, program31, program30
+  program7, program8, program9, program10, program11, program14, program15, program16, program17, program19,program20,program21 ,program31, program30
 ];
 
 // -------------------- ANIMATIONS --------------------
