@@ -21,10 +21,12 @@ import program31 from "../programs/dbmsProg-12";
 import program30 from "../programs/dbmsProg-11";
 import program20 from "../programs/program20";
 import program21 from "../programs/program21";
+import program18 from "../programs/program18";
+import program22 from "../programs/program22";
 
 const programs = [
   program1, program2, program3, program4, program5, program6,
-  program7, program8, program9, program10, program11, program14, program15, program16, program17, program19,program20,program21 ,program31, program30
+  program7, program8, program9, program10, program11, program14, program15, program16, program17,program18 ,program19,program20,program21 ,program22
 ];
 
 // -------------------- ANIMATIONS --------------------
