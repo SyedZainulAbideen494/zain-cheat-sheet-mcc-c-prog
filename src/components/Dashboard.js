@@ -23,10 +23,12 @@ import program20 from "../programs/program20";
 import program21 from "../programs/program21";
 import program18 from "../programs/program18";
 import program22 from "../programs/program22";
+import program12 from "../programs/program12";
+import program13 from "../programs/program13";
 
 const programs = [
   program1, program2, program3, program4, program5, program6,
-  program7, program8, program9, program10, program11, program14, program15, program16, program17,program18 ,program19,program20,program21 ,program22
+  program7, program8, program9, program10, program11, program12,program13 ,program14, program15, program16, program17,program18 ,program19,program20,program21 ,program22
 ];
 
 // -------------------- ANIMATIONS --------------------
