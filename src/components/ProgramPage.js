@@ -27,11 +27,13 @@ import program20 from "../programs/program20";
 import program21 from "../programs/program21";
 import program18 from "../programs/program18";
 import program22 from "../programs/program22";
+import program12 from "../programs/program12";
+import program13 from "../programs/program13";
 
 const allPrograms = {
   1: program1, 2: program2, 3: program3, 4: program4,
   5: program5, 6: program6, 7: program7, 8: program8,
-  9: program9, 10: program10, 11: program11, 14: program14, 15: program15,
+  9: program9, 10: program10, 11: program11,12: program12, 13: program13, 14: program14, 15: program15,
   16: program16, 17: program17,18: program18,19: program19 ,20: program20,21: program21,22:program22,30: program30, 31: program31
 };
 
