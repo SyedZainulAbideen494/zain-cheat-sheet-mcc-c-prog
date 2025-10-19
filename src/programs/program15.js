@@ -6,7 +6,7 @@ const program15 = {
 #include <string.h>
 
 int main() {
-    char names[25][20], temp[20];
+    char names[25][20], sorted[25][20], temp[20];
     int n, i, j;
 
     printf("\\nHow many names? ");
@@ -15,16 +15,17 @@ int main() {
     printf("\\nEnter the names:\\n");
     for (i = 0; i < n; i++) {
         printf("Name %d: ", i + 1);
-        scanf("%s", names[i]);   // safer than gets()
+        scanf("%s", names[i]);
+        strcpy(sorted[i], names[i]); // copy original names into sorted array
     }
 
     // Sorting names in alphabetical order
     for (i = 0; i < n - 1; i++) {
         for (j = i + 1; j < n; j++) {
-            if (strcmp(names[i], names[j]) > 0) {
-                strcpy(temp, names[i]);
-                strcpy(names[i], names[j]);
-                strcpy(names[j], temp);
+            if (strcmp(sorted[i], sorted[j]) > 0) {
+                strcpy(temp, sorted[i]);
+                strcpy(sorted[i], sorted[j]);
+                strcpy(sorted[j], temp);
             }
         }
     }
@@ -34,7 +35,7 @@ int main() {
     printf("------------------------------------------------------\\n");
 
     for (i = 0; i < n; i++) {
-        printf("%-15s %-15s %-15s\\n", names[i], names[i], names[n - i - 1]);
+        printf("%-15s %-15s %-15s\\n", names[i], sorted[i], sorted[n - i - 1]);
     }
 
     return 0;
