@@ -173,7 +173,7 @@ export default function ProgramPage() {
 
   return (
     <Container>
-      <BackButton onClick={() => navigate(-1)}>
+      <BackButton onClick={() => navigate("/")}>
         <FiArrowLeft /> Back
       </BackButton>
 
