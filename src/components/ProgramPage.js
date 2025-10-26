@@ -117,9 +117,14 @@ const Button = styled.button`
 
 const CodeWrapper = styled.div`
   border-radius: 12px;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
   box-shadow: 0px 0px 20px rgba(0,0,0,0.4);
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 8px;     /* space below code */
+  margin-right: 6px;       /* small right margin */
 `;
+
 
 // -------------------- TOAST --------------------
 const Toast = styled.div`
@@ -190,17 +195,22 @@ export default function ProgramPage() {
           {showModal === "copied" ? "Copied to clipboard!" : "File downloaded!"}
         </Toast>
       )}
-      <CodeWrapper>
-        <SyntaxHighlighter
-          language={prog.lang}
-          style={tomorrowNight}
-          showLineNumbers
-          wrapLongLines
-        >
-          {prog.code}
-        </SyntaxHighlighter>
-      </CodeWrapper>
-
+<CodeWrapper>
+  <SyntaxHighlighter
+    language={prog.lang}
+    style={tomorrowNight}
+    showLineNumbers
+    wrapLines={false}
+    customStyle={{
+      minWidth: "600px",
+      fontSize: "0.95rem",
+      paddingRight: "24px",  // extra space on the right inside the code
+      background: "transparent", // keep background consistent
+    }}
+  >
+    {prog.code}
+  </SyntaxHighlighter>
+</CodeWrapper>
 
     </Container>
   );
