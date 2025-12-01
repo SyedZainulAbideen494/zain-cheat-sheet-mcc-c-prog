@@ -1,3 +1,4 @@
+// src/components/ProgramPage.js
 import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
@@ -35,7 +36,7 @@ const allPrograms = {
   15: program15, 16: program16, 17: program17, 18: program18, 19: program19, 20: program20, 21: program21,
   22: program22
 };
-const idsList = Object.keys(allPrograms).map(n => +n).sort((a,b)=>a-b);
+const idsList = Object.keys(allPrograms).map((n) => +n).sort((a, b) => a - b);
 
 /* ---------------- Animations ---------------- */
 const fadeIn = keyframes`
@@ -141,6 +142,7 @@ const Button = styled.button`
   &:hover { background: var(--panelHover); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,.25); }
   &:active { transform: scale(.98); }
   &:focus-visible { outline: none; box-shadow: 0 0 0 4px var(--ring); }
+  &:disabled { opacity: .5; cursor: not-allowed; transform: none; box-shadow: none; }
 `;
 
 const Toggle = styled(Button)`
@@ -156,8 +158,8 @@ const CodeShell = styled.div`
   border-radius: 14px;
   overflow: hidden;
   border: 1px solid var(--stroke);
-  background: radial-gradient(1200px 700px at 10% -10%, #0e1520 0%, var(--bg) 55%)
-            , radial-gradient(1000px 600px at 100% 120%, #0b1118 0%, var(--bg) 60%);
+  background: radial-gradient(1200px 700px at 10% -10%, #0e1520 0%, var(--bg) 55%),
+              radial-gradient(1000px 600px at 100% 120%, #0b1118 0%, var(--bg) 60%);
   box-shadow: 0 16px 36px rgba(0,0,0,.35);
   transform: translateZ(0);
   will-change: transform;
@@ -166,7 +168,7 @@ const CodeShell = styled.div`
     content:"";
     position:absolute; inset:-1px; border-radius: 14px; pointer-events:none;
     background: radial-gradient(220px 150px at var(--mx,50%) var(--my,50%), rgba(112,230,255,0.12), transparent 60%);
-    mix-blend-mode: screen; opacity: 0; transition: opacity .18s ease;
+    mix-blend-mode: screen; opacity: var(--afterOpacity,0); transition: opacity .18s ease;
   }
 `;
 
@@ -212,6 +214,23 @@ export default function ProgramPage() {
     return Math.min(22, Math.max(12, saved));
   });
 
+  // mobile detection for forced unwrapped view
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== "undefined" && window.matchMedia("(max-width: 560px)").matches
+  );
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mq = window.matchMedia("(max-width: 560px)");
+    const handler = (e) => setIsMobile(e.matches);
+    mq.addEventListener?.("change", handler);
+    mq.addListener?.(handler); // fallback
+    return () => {
+      mq.removeEventListener?.("change", handler);
+      mq.removeListener?.(handler);
+    };
+  }, []);
+  const effectiveWrap = isMobile ? false : wrap;
+
   // scroll to top when id changes
   useEffect(() => { window.scrollTo({ top: 0, behavior: "smooth" }); }, [numericId]);
 
@@ -220,10 +239,11 @@ export default function ProgramPage() {
   const prevId = useMemo(() => (index > 0 ? idsList[index - 1] : null), [index]);
   const nextId = useMemo(() => (index >= 0 && index < idsList.length - 1 ? idsList[index + 1] : null), [index]);
 
-  // helpers (defined unconditionally)
+  // helpers (unconditional)
   const show = useCallback((msg) => {
     setShowToast(msg);
-    setTimeout(() => setShowToast(null), 1600);
+    const t = setTimeout(() => setShowToast(null), 1600);
+    return () => clearTimeout(t);
   }, []);
 
   const copyCode = useCallback(async () => {
@@ -260,12 +280,16 @@ export default function ProgramPage() {
   }, [prog, extByLang, show]);
 
   const toggleWrap = useCallback(() => {
+    if (isMobile) {
+      show("Wrap disabled on mobile");
+      return;
+    }
     setWrap((v) => {
       const nv = !v;
       localStorage.setItem("wrap", nv ? "1" : "0");
       return nv;
     });
-  }, []);
+  }, [isMobile, show]);
 
   const adjustFont = useCallback((delta) => {
     setFont((f) => {
@@ -291,7 +315,7 @@ export default function ProgramPage() {
     return () => window.removeEventListener("keydown", onKey);
   }, [navigate, copyCode, downloadFile, toggleWrap, adjustFont, prevId, nextId, numericId]);
 
-  // hover tilt + spotlight (no no-op expressions)
+  // hover tilt + spotlight
   const onMouseMove = (e) => {
     const el = shellRef.current;
     if (!el) return;
@@ -354,8 +378,13 @@ export default function ProgramPage() {
             <Button onClick={downloadFile} title="Download (d)">
               <FiDownload /> Download
             </Button>
-            <Toggle onClick={toggleWrap} active={wrap} title="Toggle wrap (w)">
-              {wrap ? "Unwrap" : "Wrap"}
+            <Toggle
+              onClick={toggleWrap}
+              active={effectiveWrap}
+              title={isMobile ? "Wrap disabled on mobile" : "Toggle wrap (w)"}
+              disabled={isMobile}
+            >
+              {effectiveWrap ? "Unwrap" : "Wrap"}
             </Toggle>
             <Button onClick={() => adjustFont(-1)} title="Font smaller (-)">A−</Button>
             <Button onClick={() => adjustFont(+1)} title="Font bigger (+)">A+</Button>
@@ -370,12 +399,13 @@ export default function ProgramPage() {
                 language={prog.lang}
                 style={tomorrowNight}
                 showLineNumbers
-                wrapLines={wrap}
+                wrapLines={effectiveWrap}
                 customStyle={{
-                  minWidth: wrap ? "auto" : "600px",
+                  minWidth: effectiveWrap ? "auto" : "600px",
                   fontSize: `${font}px`,
                   paddingRight: "24px",
                   background: "transparent",
+                  overflowX: "auto", // ensure horizontal scroll on mobile
                 }}
                 codeTagProps={{ style: { fontFeatureSettings: "'calt' 0, 'liga' 0" } }}
               >
