@@ -274,7 +274,7 @@ export default function Dashboard() {
           <div className="blob b1" aria-hidden />
           <div className="blob b2" aria-hidden />
           <h1>Java Programs</h1>
-          <p>Minimal surface. Precise motion. Touch-first.</p>
+          <p></p>
         </Hero>
 
         <Grid>

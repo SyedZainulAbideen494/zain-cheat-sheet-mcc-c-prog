@@ -4,6 +4,7 @@ import Navbar from "./components/Navbar";
 import Dashboard from "./components/Dashboard";
 import ProgramPage from "./components/ProgramPage";
 import styled, { createGlobalStyle, keyframes } from "styled-components";
+import JavaRunner from "./components/runcode";
 
 // --- Global Styles ---
 const GlobalStyle = createGlobalStyle`
@@ -113,6 +114,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/program/:id" element={<ProgramPage />} />
+          <Route path="/run" element={<JavaRunner />} />
         </Routes>
       </Main>
     </Router>
