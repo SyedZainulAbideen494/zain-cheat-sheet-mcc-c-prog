@@ -1,4 +1,3 @@
-// src/components/ProgramPage.js
 import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
@@ -31,12 +30,9 @@ import program22 from "../programs/program22";
 
 /* ---------------- Registry ---------------- */
 const allPrograms = {
-  1: program1, 2: program2, 3: program3, 4: program4, 5: program5, 6: program6, 7: program7,
-  8: program8, 9: program9, 10: program10, 11: program11, 12: program12, 13: program13, 14: program14,
-  15: program15, 16: program16, 17: program17, 18: program18, 19: program19, 20: program20, 21: program21,
-  22: program22
+  1: program1, 2: program2, 3: program3
 };
-const idsList = Object.keys(allPrograms).map((n) => +n).sort((a, b) => a - b);
+const idsList = Object.keys(allPrograms).map(n => +n).sort((a,b)=>a-b);
 
 /* ---------------- Animations ---------------- */
 const fadeIn = keyframes`
@@ -48,9 +44,9 @@ const slideUp = keyframes`
   to   { opacity: 1; transform: translateY(0); }
 `;
 const floaty = keyframes`
-  0% { transform: translate3d(0,0,0) rotate(0.001deg); }
-  50% { transform: translate3d(0,-8px,0) rotate(0.001deg); }
-  100% { transform: translate3d(0,0,0) rotate(0.001deg); }
+  0% { transform: translate3d(0,0,0); }
+  50% { transform: translate3d(0,-8px,0); }
+  100% { transform: translate3d(0,0,0); }
 `;
 
 /* ---------------- Styles ---------------- */
@@ -67,7 +63,6 @@ const Page = styled.div`
   padding: 18px 16px 40px;
   color: var(--text);
   animation: ${fadeIn} .6s ease both;
-
   @media (min-width: 720px) {
     padding: 28px 24px 56px;
   }
@@ -142,28 +137,21 @@ const Button = styled.button`
   &:hover { background: var(--panelHover); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,.25); }
   &:active { transform: scale(.98); }
   &:focus-visible { outline: none; box-shadow: 0 0 0 4px var(--ring); }
-  &:disabled { opacity: .5; cursor: not-allowed; transform: none; box-shadow: none; }
-`;
-
-const Toggle = styled(Button)`
-  ${({ active }) => (active ? `box-shadow: 0 0 0 4px var(--ring);` : ``)}
 `;
 
 const Spacer = styled.div` flex: 1; `;
-
 const Pager = styled.div` display:flex; gap:8px; `;
 
 const CodeShell = styled.div`
   position: relative;
   border-radius: 14px;
-  overflow: hidden;
+  overflow-x: auto; /* Always allow horizontal scroll */
   border: 1px solid var(--stroke);
   background: radial-gradient(1200px 700px at 10% -10%, #0e1520 0%, var(--bg) 55%),
               radial-gradient(1000px 600px at 100% 120%, #0b1118 0%, var(--bg) 60%);
   box-shadow: 0 16px 36px rgba(0,0,0,.35);
   transform: translateZ(0);
   will-change: transform;
-
   &::after{
     content:"";
     position:absolute; inset:-1px; border-radius: 14px; pointer-events:none;
@@ -174,6 +162,7 @@ const CodeShell = styled.div`
 
 const CodeInner = styled.div`
   padding: 14px 12px 10px;
+  min-width: 600px;
   @media (min-width: 720px) { padding: 18px 16px 12px; }
 `;
 
@@ -206,40 +195,9 @@ export default function ProgramPage() {
   const prog = allPrograms[numericId];
   const navigate = useNavigate();
   const shellRef = useRef(null);
-
   const [showToast, setShowToast] = useState(null);
-  const [wrap, setWrap] = useState(() => localStorage.getItem("wrap") === "1");
-  const [font, setFont] = useState(() => {
-    const saved = Number(localStorage.getItem("fontSize")) || 15;
-    return Math.min(22, Math.max(12, saved));
-  });
+  const [font, setFont] = useState(() => Number(localStorage.getItem("fontSize")) || 15);
 
-  // mobile detection for forced unwrapped view
-  const [isMobile, setIsMobile] = useState(() =>
-    typeof window !== "undefined" && window.matchMedia("(max-width: 560px)").matches
-  );
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const mq = window.matchMedia("(max-width: 560px)");
-    const handler = (e) => setIsMobile(e.matches);
-    mq.addEventListener?.("change", handler);
-    mq.addListener?.(handler); // fallback
-    return () => {
-      mq.removeEventListener?.("change", handler);
-      mq.removeListener?.(handler);
-    };
-  }, []);
-  const effectiveWrap = isMobile ? false : wrap;
-
-  // scroll to top when id changes
-  useEffect(() => { window.scrollTo({ top: 0, behavior: "smooth" }); }, [numericId]);
-
-  // prev/next calculation
-  const index = idsList.indexOf(numericId);
-  const prevId = useMemo(() => (index > 0 ? idsList[index - 1] : null), [index]);
-  const nextId = useMemo(() => (index >= 0 && index < idsList.length - 1 ? idsList[index + 1] : null), [index]);
-
-  // helpers (unconditional)
   const show = useCallback((msg) => {
     setShowToast(msg);
     const t = setTimeout(() => setShowToast(null), 1600);
@@ -256,7 +214,7 @@ export default function ProgramPage() {
     }
   }, [prog, show]);
 
-  const extByLang = useCallback((lang) => {
+  const extByLang = (lang) => {
     const L = (lang || "").toLowerCase();
     if (L === "c") return "c";
     if (L === "cpp" || L === "c++") return "cpp";
@@ -264,7 +222,7 @@ export default function ProgramPage() {
     if (L === "python" || L === "py") return "py";
     if (L === "javascript" || L === "js") return "js";
     return "txt";
-  }, []);
+  };
 
   const downloadFile = useCallback(() => {
     if (!prog) return;
@@ -277,19 +235,7 @@ export default function ProgramPage() {
     link.click();
     link.remove();
     show("File downloaded");
-  }, [prog, extByLang, show]);
-
-  const toggleWrap = useCallback(() => {
-    if (isMobile) {
-      show("Wrap disabled on mobile");
-      return;
-    }
-    setWrap((v) => {
-      const nv = !v;
-      localStorage.setItem("wrap", nv ? "1" : "0");
-      return nv;
-    });
-  }, [isMobile, show]);
+  }, [prog, show]);
 
   const adjustFont = useCallback((delta) => {
     setFont((f) => {
@@ -299,31 +245,18 @@ export default function ProgramPage() {
     });
   }, []);
 
-  // keyboard shortcuts
-  useEffect(() => {
-    const onKey = (e) => {
-      if (e.key === "Escape") navigate("/");
-      if (e.key === "c") { e.preventDefault(); copyCode(); }
-      if (e.key === "d") { e.preventDefault(); downloadFile(); }
-      if (e.key === "w") { e.preventDefault(); toggleWrap(); }
-      if (e.key === "+" || e.key === "=") { e.preventDefault(); adjustFont(1); }
-      if (e.key === "-" || e.key === "_") { e.preventDefault(); adjustFont(-1); }
-      if (e.key === "ArrowLeft" && prevId && prevId !== numericId) navigate(`/program/${prevId}`);
-      if (e.key === "ArrowRight" && nextId && nextId !== numericId) navigate(`/program/${nextId}`);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [navigate, copyCode, downloadFile, toggleWrap, adjustFont, prevId, nextId, numericId]);
+  const index = idsList.indexOf(numericId);
+  const prevId = useMemo(() => (index > 0 ? idsList[index - 1] : null), [index]);
+  const nextId = useMemo(() => (index >= 0 && index < idsList.length - 1 ? idsList[index + 1] : null), [index]);
 
-  // hover tilt + spotlight
   const onMouseMove = (e) => {
     const el = shellRef.current;
     if (!el) return;
     const r = el.getBoundingClientRect();
     const mx = ((e.clientX - r.left) / r.width) * 100;
     const my = ((e.clientY - r.top) / r.height) * 100;
-    const tiltX = (my - 50) / -12; // -4..4
-    const tiltY = (mx - 50) / 12;  // -4..4
+    const tiltX = (my - 50) / -12;
+    const tiltY = (mx - 50) / 12;
     el.style.transform = `perspective(1000px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) translateY(-2px)`;
     el.style.setProperty("--mx", `${mx}%`);
     el.style.setProperty("--my", `${my}%`);
@@ -337,57 +270,28 @@ export default function ProgramPage() {
     el.style.setProperty("--afterOpacity", "0");
   };
 
-  // -------- render --------
   return (
     <Page>
       <BackRow>
-        <BackButton onClick={() => navigate("/")} aria-label="Back to dashboard">
-          <FiArrowLeft /> Back
-        </BackButton>
+        <BackButton onClick={() => navigate("/")}><FiArrowLeft /> Back</BackButton>
         <LangPill>{((prog && prog.lang) || "text").toUpperCase()}</LangPill>
       </BackRow>
 
       <TitleRow>
         <Title>{prog ? prog.title : "Program not found"}</Title>
         <Pager>
-          <Button
-            onClick={() => prevId && navigate(`/program/${prevId}`)}
-            disabled={!prevId || prevId === numericId}
-            aria-label="Previous program"
-            title="Previous (←)"
-          >
-            <FiChevronLeft /> Prev
-          </Button>
-          <Button
-            onClick={() => nextId && navigate(`/program/${nextId}`)}
-            disabled={!nextId || nextId === numericId}
-            aria-label="Next program"
-            title="Next (→)"
-          >
-            Next <FiChevronRight />
-          </Button>
+          <Button onClick={() => prevId && navigate(`/program/${prevId}`)} disabled={!prevId}><FiChevronLeft /> Prev</Button>
+          <Button onClick={() => nextId && navigate(`/program/${nextId}`)} disabled={!nextId}>Next <FiChevronRight /></Button>
         </Pager>
       </TitleRow>
 
       {prog ? (
         <>
-          <Toolbar role="toolbar" aria-label="Code actions">
-            <Button onClick={copyCode} title="Copy (c)">
-              <FiCopy /> Copy
-            </Button>
-            <Button onClick={downloadFile} title="Download (d)">
-              <FiDownload /> Download
-            </Button>
-            <Toggle
-              onClick={toggleWrap}
-              active={effectiveWrap}
-              title={isMobile ? "Wrap disabled on mobile" : "Toggle wrap (w)"}
-              disabled={isMobile}
-            >
-              {effectiveWrap ? "Unwrap" : "Wrap"}
-            </Toggle>
-            <Button onClick={() => adjustFont(-1)} title="Font smaller (-)">A−</Button>
-            <Button onClick={() => adjustFont(+1)} title="Font bigger (+)">A+</Button>
+          <Toolbar>
+            <Button onClick={copyCode}><FiCopy /> Copy</Button>
+            <Button onClick={downloadFile}><FiDownload /> Download</Button>
+            <Button onClick={() => adjustFont(-1)}>A−</Button>
+            <Button onClick={() => adjustFont(+1)}>A+</Button>
             <Spacer />
             <LangPill>Program #{prog.id}</LangPill>
           </Toolbar>
@@ -399,13 +303,13 @@ export default function ProgramPage() {
                 language={prog.lang}
                 style={tomorrowNight}
                 showLineNumbers
-                wrapLines={effectiveWrap}
+                wrapLines={false} // 🚀 always unwrapped
                 customStyle={{
-                  minWidth: effectiveWrap ? "auto" : "600px",
+                  minWidth: "600px",
                   fontSize: `${font}px`,
                   paddingRight: "24px",
                   background: "transparent",
-                  overflowX: "auto", // ensure horizontal scroll on mobile
+                  overflowX: "auto",
                 }}
                 codeTagProps={{ style: { fontFeatureSettings: "'calt' 0, 'liga' 0" } }}
               >
