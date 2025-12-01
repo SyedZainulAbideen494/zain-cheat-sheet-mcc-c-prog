@@ -3,35 +3,14 @@ import { useParams, useNavigate } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { tomorrowNight } from "react-syntax-highlighter/dist/esm/styles/hljs";
-import { FiCopy, FiDownload, FiCheck, FiArrowLeft, FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { FiCopy, FiDownload, FiCheck, FiArrowLeft, FiChevronLeft, FiChevronRight, FiHelpCircle } from "react-icons/fi";
 
 import program1 from "../programs/program1";
 import program2 from "../programs/program2";
 import program3 from "../programs/program3";
-import program4 from "../programs/program4";
-import program5 from "../programs/program5";
-import program6 from "../programs/program6";
-import program7 from "../programs/program7";
-import program8 from "../programs/program8";
-import program9 from "../programs/program9";
-import program10 from "../programs/program10";
-import program11 from "../programs/program11";
-import program12 from "../programs/program12";
-import program13 from "../programs/program13";
-import program14 from "../programs/program14";
-import program15 from "../programs/program15";
-import program16 from "../programs/program16";
-import program17 from "../programs/program17";
-import program18 from "../programs/program18";
-import program19 from "../programs/program19";
-import program20 from "../programs/program20";
-import program21 from "../programs/program21";
-import program22 from "../programs/program22";
 
 /* ---------------- Registry ---------------- */
-const allPrograms = {
-  1: program1, 2: program2, 3: program3
-};
+const allPrograms = { 1: program1, 2: program2, 3: program3 };
 const idsList = Object.keys(allPrograms).map(n => +n).sort((a,b)=>a-b);
 
 /* ---------------- Animations ---------------- */
@@ -63,9 +42,7 @@ const Page = styled.div`
   padding: 18px 16px 40px;
   color: var(--text);
   animation: ${fadeIn} .6s ease both;
-  @media (min-width: 720px) {
-    padding: 28px 24px 56px;
-  }
+  @media (min-width: 720px) { padding: 28px 24px 56px; }
 `;
 
 const BackRow = styled.div`
@@ -79,9 +56,7 @@ const BackButton = styled.button`
   padding: 8px 12px;
   border-radius: 12px;
   cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
+  display: inline-flex; align-items: center; gap: 8px;
   transition: transform .18s ease, background .18s ease, box-shadow .18s ease;
   &:hover { background: var(--panelHover); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,.25); }
   &:active { transform: scale(.98); }
@@ -90,8 +65,7 @@ const BackButton = styled.button`
 
 const TitleRow = styled.div`
   display:flex; align-items:center; justify-content:space-between; gap: 10px;
-  margin: 8px 0 8px;
-  flex-wrap: wrap;
+  margin: 8px 0 8px; flex-wrap: wrap;
 `;
 
 const Title = styled.h2`
@@ -111,61 +85,49 @@ const LangPill = styled.span`
 `;
 
 const Toolbar = styled.div`
-  position: sticky;
-  top: 12px;
-  z-index: 10;
+  position: sticky; top: 12px; z-index: 10;
   display:flex; align-items:center; gap: 10px; flex-wrap: wrap;
-  padding: 10px;
-  margin: 6px 0 16px;
+  padding: 10px; margin: 6px 0 16px;
   background: linear-gradient(180deg, rgba(12,15,20,.85), rgba(12,15,20,.45));
-  border: 1px solid var(--stroke);
-  border-radius: 14px;
-  backdrop-filter: blur(12px);
-  box-shadow: 0 10px 28px rgba(0,0,0,.22);
+  border: 1px solid var(--stroke); border-radius: 14px;
+  backdrop-filter: blur(12px); box-shadow: 0 10px 28px rgba(0,0,0,.22);
 `;
 
 const Button = styled.button`
-  background: var(--panel);
-  color: var(--text);
-  border: 1px solid var(--stroke);
-  padding: 8px 12px;
-  border-radius: 12px;
-  cursor: pointer;
-  display: inline-flex; align-items: center; gap: 8px;
-  font-size: 0.92rem;
+  background: var(--panel); color: var(--text);
+  border: 1px solid var(--stroke); padding: 8px 12px;
+  border-radius: 12px; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 8px; font-size: 0.92rem;
   transition: transform .18s ease, background .18s ease, box-shadow .18s ease;
   &:hover { background: var(--panelHover); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,.25); }
   &:active { transform: scale(.98); }
   &:focus-visible { outline: none; box-shadow: 0 0 0 4px var(--ring); }
 `;
 
+const GhostButton = styled(Button)`
+  background: transparent;
+`;
+
 const Spacer = styled.div` flex: 1; `;
 const Pager = styled.div` display:flex; gap:8px; `;
 
 const CodeShell = styled.div`
-  position: relative;
-  border-radius: 14px;
-  overflow-x: auto; /* Always allow horizontal scroll */
+  position: relative; border-radius: 14px; overflow-x: auto;
   border: 1px solid var(--stroke);
   background: radial-gradient(1200px 700px at 10% -10%, #0e1520 0%, var(--bg) 55%),
               radial-gradient(1000px 600px at 100% 120%, #0b1118 0%, var(--bg) 60%);
   box-shadow: 0 16px 36px rgba(0,0,0,.35);
-  transform: translateZ(0);
-  will-change: transform;
+  transform: translateZ(0); will-change: transform;
   &::after{
-    content:"";
-    position:absolute; inset:-1px; border-radius: 14px; pointer-events:none;
+    content:""; position:absolute; inset:-1px; border-radius: 14px; pointer-events:none;
     background: radial-gradient(220px 150px at var(--mx,50%) var(--my,50%), rgba(112,230,255,0.12), transparent 60%);
     mix-blend-mode: screen; opacity: var(--afterOpacity,0); transition: opacity .18s ease;
   }
 `;
-
 const CodeInner = styled.div`
-  padding: 14px 12px 10px;
-  min-width: 600px;
+  padding: 14px 12px 10px; min-width: 600px;
   @media (min-width: 720px) { padding: 18px 16px 12px; }
 `;
-
 const GlowBlob = styled.div`
   position: absolute; width: 260px; height: 260px; border-radius: 50%;
   filter: blur(32px); opacity: .22; pointer-events: none; mix-blend-mode: screen;
@@ -174,18 +136,20 @@ const GlowBlob = styled.div`
 `;
 
 const Toast = styled.div`
-  position: fixed;
-  top: 16px; left: 50%; transform: translateX(-50%);
-  background: #14181f;
-  border: 1px solid var(--stroke);
-  border-radius: 12px;
-  padding: 10px 14px;
-  color: var(--text);
-  font-size: 0.92rem;
-  display: flex; align-items: center; gap: 8px;
-  box-shadow: 0 10px 24px rgba(0,0,0,.30);
-  animation: ${slideUp} .32s ease both;
-  z-index: 9999;
+  position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+  background: #14181f; border: 1px solid var(--stroke);
+  border-radius: 12px; padding: 10px 14px; color: var(--text); font-size: 0.92rem;
+  display: flex; align-items: center; gap: 8px; box-shadow: 0 10px 24px rgba(0,0,0,.30);
+  animation: ${slideUp} .32s ease both; z-index: 9999;
+`;
+
+const Shortcuts = styled.div`
+  position: fixed; right: 16px; bottom: 16px; z-index: 20;
+  background: rgba(15,23,42,.9); border: 1px solid var(--stroke); border-radius: 12px;
+  padding: 10px 12px; color: var(--muted); font-size: .88rem;
+  box-shadow: 0 10px 28px rgba(0,0,0,.35); animation: ${fadeIn} .25s ease both;
+  ul { margin: 6px 0 0; padding-left: 18px; }
+  li { margin: 2px 0; }
 `;
 
 /* ---------------- Component ---------------- */
@@ -195,8 +159,10 @@ export default function ProgramPage() {
   const prog = allPrograms[numericId];
   const navigate = useNavigate();
   const shellRef = useRef(null);
+
   const [showToast, setShowToast] = useState(null);
   const [font, setFont] = useState(() => Number(localStorage.getItem("fontSize")) || 15);
+  const [showHelp, setShowHelp] = useState(false);
 
   const show = useCallback((msg) => {
     setShowToast(msg);
@@ -206,12 +172,8 @@ export default function ProgramPage() {
 
   const copyCode = useCallback(async () => {
     if (!prog) return;
-    try {
-      await navigator.clipboard.writeText(prog.code);
-      show("Copied to clipboard");
-    } catch {
-      show("Copy failed");
-    }
+    try { await navigator.clipboard.writeText(prog.code); show("Copied to clipboard"); }
+    catch { show("Copy failed"); }
   }, [prog, show]);
 
   const extByLang = (lang) => {
@@ -245,13 +207,33 @@ export default function ProgramPage() {
     });
   }, []);
 
+  // index + neighbors
   const index = idsList.indexOf(numericId);
   const prevId = useMemo(() => (index > 0 ? idsList[index - 1] : null), [index]);
   const nextId = useMemo(() => (index >= 0 && index < idsList.length - 1 ? idsList[index + 1] : null), [index]);
 
+  // scroll to top on id change
+  useEffect(() => { window.scrollTo({ top: 0, behavior: "smooth" }); }, [numericId]);
+
+  // keyboard shortcuts (the “key functions”):
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === "Escape") { e.preventDefault(); navigate("/"); }
+      if (e.key === "?") { e.preventDefault(); setShowHelp(s => !s); }
+      if (e.key === "c") { e.preventDefault(); copyCode(); }
+      if (e.key === "d") { e.preventDefault(); downloadFile(); }
+      if (e.key === "+" || e.key === "=") { e.preventDefault(); adjustFont(1); }
+      if (e.key === "-" || e.key === "_") { e.preventDefault(); adjustFont(-1); }
+      if (e.key === "ArrowLeft" && prevId != null) { e.preventDefault(); navigate(`/program/${prevId}`); }
+      if (e.key === "ArrowRight" && nextId != null) { e.preventDefault(); navigate(`/program/${nextId}`); }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [navigate, copyCode, downloadFile, adjustFont, prevId, nextId]);
+
+  // tilt + glow
   const onMouseMove = (e) => {
-    const el = shellRef.current;
-    if (!el) return;
+    const el = shellRef.current; if (!el) return;
     const r = el.getBoundingClientRect();
     const mx = ((e.clientX - r.left) / r.width) * 100;
     const my = ((e.clientY - r.top) / r.height) * 100;
@@ -262,10 +244,8 @@ export default function ProgramPage() {
     el.style.setProperty("--my", `${my}%`);
     el.style.setProperty("--afterOpacity", ".95");
   };
-
   const onMouseLeave = () => {
-    const el = shellRef.current;
-    if (!el) return;
+    const el = shellRef.current; if (!el) return;
     el.style.transform = `perspective(1000px) rotateX(0) rotateY(0) translateY(0)`;
     el.style.setProperty("--afterOpacity", "0");
   };
@@ -273,26 +253,33 @@ export default function ProgramPage() {
   return (
     <Page>
       <BackRow>
-        <BackButton onClick={() => navigate("/")}><FiArrowLeft /> Back</BackButton>
+        <BackButton onClick={() => navigate("/")} aria-label="Back"><FiArrowLeft /> Back</BackButton>
         <LangPill>{((prog && prog.lang) || "text").toUpperCase()}</LangPill>
       </BackRow>
 
       <TitleRow>
         <Title>{prog ? prog.title : "Program not found"}</Title>
         <Pager>
-          <Button onClick={() => prevId && navigate(`/program/${prevId}`)} disabled={!prevId}><FiChevronLeft /> Prev</Button>
-          <Button onClick={() => nextId && navigate(`/program/${nextId}`)} disabled={!nextId}>Next <FiChevronRight /></Button>
+          <Button onClick={() => prevId && navigate(`/program/${prevId}`)} disabled={!prevId} title="Prev (←)">
+            <FiChevronLeft /> Prev
+          </Button>
+          <Button onClick={() => nextId && navigate(`/program/${nextId}`)} disabled={!nextId} title="Next (→)">
+            Next <FiChevronRight />
+          </Button>
         </Pager>
       </TitleRow>
 
       {prog ? (
         <>
-          <Toolbar>
-            <Button onClick={copyCode}><FiCopy /> Copy</Button>
-            <Button onClick={downloadFile}><FiDownload /> Download</Button>
-            <Button onClick={() => adjustFont(-1)}>A−</Button>
-            <Button onClick={() => adjustFont(+1)}>A+</Button>
+          <Toolbar role="toolbar" aria-label="Code actions">
+            <Button onClick={copyCode} title="Copy (c)"><FiCopy /> Copy</Button>
+            <Button onClick={downloadFile} title="Download (d)"><FiDownload /> Download</Button>
+            <Button onClick={() => adjustFont(-1)} title="Font smaller (-)">A−</Button>
+            <Button onClick={() => adjustFont(+1)} title="Font bigger (+)">A+</Button>
             <Spacer />
+            <GhostButton onClick={() => setShowHelp(s => !s)} title="Shortcuts (?)">
+              <FiHelpCircle /> Shortcuts
+            </GhostButton>
             <LangPill>Program #{prog.id}</LangPill>
           </Toolbar>
 
@@ -303,7 +290,7 @@ export default function ProgramPage() {
                 language={prog.lang}
                 style={tomorrowNight}
                 showLineNumbers
-                wrapLines={false} // 🚀 always unwrapped
+                wrapLines={false} // always unwrapped
                 customStyle={{
                   minWidth: "600px",
                   fontSize: `${font}px`,
@@ -322,11 +309,22 @@ export default function ProgramPage() {
         <p style={{ color: "#aaa", padding: 20 }}>Program not found.</p>
       )}
 
+      {showHelp && (
+        <Shortcuts>
+          <strong>Shortcuts</strong>
+          <ul>
+            <li><kbd>c</kbd> copy</li>
+            <li><kbd>d</kbd> download</li>
+            <li><kbd>+</kbd>/<kbd>-</kbd> font size</li>
+            <li><kbd>←</kbd>/<kbd>→</kbd> prev/next</li>
+            <li><kbd>Esc</kbd> back</li>
+            <li><kbd>?</kbd> toggle this</li>
+          </ul>
+        </Shortcuts>
+      )}
+
       {showToast && (
-        <Toast>
-          <FiCheck />
-          {showToast}
-        </Toast>
+        <Toast><FiCheck /> {showToast}</Toast>
       )}
     </Page>
   );
