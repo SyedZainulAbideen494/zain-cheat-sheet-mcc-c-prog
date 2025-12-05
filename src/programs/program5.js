@@ -1,30 +1,52 @@
 const program5 = {
   id: 5,
-  title: "Program 5 - Rightmost Digit in Words",
+  title: "Program 5 - Search Two Numbers and Display Their Sum",
   lang: "c",
   code: `#include <stdio.h>
 
-int main()
-{
-    int r, num;
-    printf("Enter an integer: ");
-    scanf("%d", &num);
+int main() {
+    int n;
+    int arr[20];
+    int x, y, foundX = -1, foundY = -1;
 
-    r = num % 10; // rightmost digit
+    printf("Enter the size of the array: ");
+    scanf("%d", &n);
 
-    printf("\\nRightmost digit of %d = %d", num, r);
+    // Read array elements
+    printf("Enter %d elements:\\n", n);
+    for(int i = 0; i < n; i++) {
+        scanf("%d", &arr[i]);
+    }
 
-    switch (r) {
-        case 0: printf("\\nZero"); break;
-        case 1: printf("\\nOne"); break;
-        case 2: printf("\\nTwo"); break;
-        case 3: printf("\\nThree"); break;
-        case 4: printf("\\nFour"); break;
-        case 5: printf("\\nFive"); break;
-        case 6: printf("\\nSix"); break;
-        case 7: printf("\\nSeven"); break;
-        case 8: printf("\\nEight"); break;
-        case 9: printf("\\nNine"); break;
+    // Search two elements
+    printf("\\nEnter first number to search: ");
+    scanf("%d", &x);
+
+    printf("Enter second number to search: ");
+    scanf("%d", &y);
+
+    // Find first number
+    for(int i = 0; i < n; i++) {
+        if(arr[i] == x) {
+            foundX = i;
+            break;
+        }
+    }
+
+    // Find second number
+    for(int i = 0; i < n; i++) {
+        if(arr[i] == y) {
+            foundY = i;
+            break;
+        }
+    }
+
+    // Display result
+    if(foundX != -1 && foundY != -1) {
+        printf("\\nBoth numbers found!\\n");
+        printf("%d + %d = %d\\n", x, y, x + y);
+    } else {
+        printf("\\nOne or both numbers not found in the array.\\n");
     }
 
     return 0;

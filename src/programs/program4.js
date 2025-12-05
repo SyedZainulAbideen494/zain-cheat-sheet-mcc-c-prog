@@ -1,64 +1,27 @@
 const program4 = {
   id: 4,
-  title: "Program 4 - BESCOM Electricity Bill",
+  title: "Program 4 - Display Array Elements with Indexes",
   lang: "c",
   code: `#include <stdio.h>
-#include <string.h>
-#include <ctype.h> 
 
-int main()
-{
-    int MID, prev, pres;
-    float bamt, units;
-    char type;
+int main() {
+    int n;
+    int arr[20];
 
-    printf("Enter the meter ID: ");
-    scanf("%d", &MID);
+    printf("Enter the size of the array: ");
+    scanf("%d", &n);
 
-    printf("\\nEnter the Previous reading: ");
-    scanf("%d", &prev);
-
-    printf("\\nEnter the Present reading: ");
-    scanf("%d", &pres);
-
-    printf("\\nEnter the Customer Type (D: Domestic, B: Business): ");
-    scanf(" %c", &type);
-
-    if(toupper(type) != 'D' && toupper(type) != 'B')
-    {
-        printf("Enter valid customer type\\n");
-        return 0;
+    // Read array elements
+    printf("Enter %d elements:\\n", n);
+    for(int i = 0; i < n; i++) {
+        scanf("%d", &arr[i]);
     }
 
-    units = pres - prev;
-
-    if(toupper(type) == 'D')  // Domestic
-    {
-        if(units <= 200)
-            bamt = units * 2.00;
-        else if(units <= 400)
-            bamt = 200 * 2.00 + (units - 200) * 4.50;
-        else
-            bamt = 200 * 2.00 + 200 * 4.50 + (units - 400) * 8.00;
+    // Display elements with index
+    printf("\\nArray elements with their indexes:\\n");
+    for(int i = 0; i < n; i++) {
+        printf("Index %d -> %d\\n", i, arr[i]);
     }
-    else   // Business
-    {
-        if(units <= 200)
-            bamt = units * 8.00;
-        else if(units <= 400)
-            bamt = 200 * 8.00 + (units - 200) * 15.00;
-        else
-            bamt = 200 * 8.00 + 200 * 15.00 + (units - 400) * 22.00;
-    }
-
-    printf("\\n-------------");
-    printf("\\nBESCOM BILL");
-    printf("\\nMeter ID: %d", MID);
-    printf("\\nCustomer type: %c", toupper(type));
-    printf("\\nPrevious Reading: %d", prev);
-    printf("\\nPresent Reading: %d", pres);
-    printf("\\nUnits Consumed: %.2f", units);
-    printf("\\nBill Amount: %.2f\\n", bamt);
 
     return 0;
 }
