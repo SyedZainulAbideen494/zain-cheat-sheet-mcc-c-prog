@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ADAPT Pro - Pilot Screening (Practice)</title>
+<style>
+  :root{
+    --bg-color:#0f0f0f;
+    --hud-green:#00ff41;
+    --hud-dim:#003b0f;
+    --alert-red:#ff3333;
+    --panel-bg:#1a1a1a;
+    --text-main:#e0e0e0;
+  }
+  body{
+    margin:0;background:#000;color:var(--text-main);
+    font-family:'Consolas','Monaco','Courier New',monospace;
+    height:100vh;overflow:hidden;display:flex;justify-content:center;align-items:center;
+    user-select:none;
+  }
+  #main-interface{
+    display:flex;width:95vw;height:90vh;border:1px solid #333;
+    box-shadow:0 0 50px rgba(0,255,65,.1);background:var(--panel-bg);
+  }
+  /* LEFT */
+  #sim-view{flex:2;position:relative;background:#000;overflow:hidden;border-right:2px solid #333;cursor:none;}
+  canvas{display:block;width:100%;height:100%}
+  #hud-overlay{position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 50px rgba(0,0,0,.8)}
+  .hud-line{position:absolute;background:rgba(0,255,65,.3)}
+  .crosshair{position:absolute;top:50%;left:50%;width:20px;height:20px;transform:translate(-50%,-50%);border:1px solid rgba(0,255,65,.5)}
+  .crosshair::after{content:'';position:absolute;top:9px;left:4px;width:10px;height:2px;background:rgba(0,255,65,.8)}
+  .crosshair::before{content:'';position:absolute;left:9px;top:4px;height:10px;width:2px;background:rgba(0,255,65,.8)}
+
+  /* RIGHT */
+  #sys-view{flex:1;padding:20px;display:flex;flex-direction:column;background:#222;border-left:1px solid #000}
+  .panel-title{color:var(--hud-green);border-bottom:1px solid var(--hud-dim);padding-bottom:5px;margin-bottom:15px;font-size:14px;letter-spacing:2px}
+  .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+  .stat-box{background:#111;padding:10px;border:1px solid #333}
+  .stat-label{font-size:10px;color:#777;display:block}
+  .stat-val{font-size:18px;color:var(--hud-green);font-weight:bold}
+  #q-module{flex-grow:1;display:flex;flex-direction:column;background:#151515;border:1px solid #333;padding:15px;position:relative}
+  #timer-bar{height:4px;width:100%;background:#333;margin-bottom:20px}
+  #timer-fill{height:100%;width:100%;background:var(--hud-green);transition:width .08s linear}
+  #q-display{font-size:22px;text-align:center;margin-bottom:24px;font-weight:bold;color:#fff;min-height:28px}
+  .btn-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .ans-btn{background:#222;border:1px solid #444;color:#fff;padding:14px;font-family:inherit;font-size:18px;cursor:pointer;transition:.08s}
+  .ans-btn:hover{background:#333;border-color:var(--hud-green)}
+  .ans-btn:active{background:var(--hud-green);color:#000}
+  /* OVERLAY */
+  #overlay{
+    position:absolute;inset:0;background:rgba(0,0,0,.92);z-index:100;
+    display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center
+  }
+  .big-btn{
+    background:transparent;border:2px solid var(--hud-green);color:var(--hud-green);padding:15px 40px;
+    font-size:20px;font-family:inherit;font-weight:bold;cursor:pointer;margin-top:24px;text-transform:uppercase;letter-spacing:2px
+  }
+  .big-btn:hover{background:var(--hud-green);color:#000;box-shadow:0 0 20px var(--hud-green)}
+  table{border-collapse:collapse;width:320px;margin-top:18px;color:#ccc}
+  td{padding:8px;border-bottom:1px solid #333}
+  td:last-child{text-align:right;color:var(--hud-green)}
+  #countdown{font-size:56px;color:#fff;margin-top:8px;letter-spacing:8px}
+  #pauseHint{position:absolute;top:10px;left:50%;transform:translateX(-50%);font-size:10px;color:#888}
+</style>
+</head>
+<body>
+
+<div id="overlay">
+  <h1 style="color:white;margin-bottom:5px;">FLIGHT APTITUDE TEST</h1>
+  <div style="color:var(--hud-green);font-size:12px;letter-spacing:3px;margin-bottom:18px;">SYSTEM READY</div>
+
+  <div id="controls-hint" style="display:flex;gap:40px;text-align:center;font-size:14px;color:#888;margin-bottom:8px;">
+    <div><div style="font-size:30px;color:white;margin-bottom:5px;">🎮</div><div>W / S or Up / Down</div><div style="font-size:10px;">ALTITUDE CONTROL</div></div>
+    <div><div style="font-size:30px;color:white;margin-bottom:5px;">🧠</div><div>Mouse / 1–4</div><div style="font-size:10px;">SOLVE PROBLEMS</div></div>
+    <div><div style="font-size:30px;color:white;margin-bottom:5px;">⏸️</div><div>P to Pause</div><div style="font-size:10px;">PRACTICE FLOW</div></div>
+  </div>
+
+  <div id="countdown" style="display:none;">3</div>
+
+  <div id="results" style="display:none;">
+    <table>
+      <tr><td>Survival Time</td><td id="r-time">0s</td></tr>
+      <tr><td>Accuracy</td><td id="r-acc">0%</td></tr>
+      <tr><td>Avg Reaction</td><td id="r-spd">0ms</td></tr>
+      <tr><td>Stability Index</td><td id="r-stab">0</td></tr>
+      <tr><td style="color:white;font-weight:bold;">SCORE</td><td id="r-score" style="font-size:24px;">0</td></tr>
+    </table>
+  </div>
+
+  <button class="big-btn" id="startBtn">INITIATE</button>
+</div>
+
+<div id="main-interface">
+  <div id="sim-view">
+    <div id="pauseHint">Press <b>P</b> to Pause/Resume</div>
+    <canvas id="simCanvas"></canvas>
+    <div id="hud-overlay">
+      <div class="crosshair"></div>
+      <div class="hud-line" style="top:20%;left:10px;width:20px;height:1px"></div>
+      <div class="hud-line" style="top:40%;left:10px;width:10px;height:1px"></div>
+      <div class="hud-line" style="top:60%;left:10px;width:10px;height:1px"></div>
+      <div class="hud-line" style="top:80%;left:10px;width:20px;height:1px"></div>
+      <div style="position:absolute;bottom:10px;left:10px;color:var(--hud-green);font-size:10px;" id="hud-vel">VEL: 0</div>
+      <div style="position:absolute;bottom:10px;right:10px;color:var(--hud-green);font-size:10px;" id="hud-diff">DIFF: 1.00</div>
+    </div>
+  </div>
+
+  <div id="sys-view">
+    <div class="panel-title">FLIGHT DATA</div>
+    <div class="stats-grid">
+      <div class="stat-box"><span class="stat-label">TIMER</span><span class="stat-val" id="ui-time">0.0</span></div>
+      <div class="stat-box"><span class="stat-label">ACCURACY</span><span class="stat-val" id="ui-acc">100%</span></div>
+      <div class="stat-box"><span class="stat-label">STABILITY</span><span class="stat-val" id="ui-stab">100</span></div>
+      <div class="stat-box"><span class="stat-label">QUESTIONS</span><span class="stat-val" id="ui-q">0</span></div>
+    </div>
+
+    <div class="panel-title">COGNITIVE LOAD</div>
+    <div id="q-module">
+      <div id="timer-bar"><div id="timer-fill"></div></div>
+      <div id="q-display">WAITING...</div>
+      <div class="btn-grid">
+        <button class="ans-btn" id="btn-0">1</button>
+        <button class="ans-btn" id="btn-1">2</button>
+        <button class="ans-btn" id="btn-2">3</button>
+        <button class="ans-btn" id="btn-3">4</button>
+      </div>
+      <div style="margin-top:auto;text-align:center;font-size:10px;color:#555;">KEYS: 1, 2, 3, 4 &nbsp;•&nbsp; P: Pause</div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* --------------------------- MAIN APP --------------------------- */
+const app = {
+  running:false, paused:false, startTime:0,
+  sim:null, quiz:null, raf:null,
+  stabilityScore:100, // 0–100
+  diffFactor:1, // difficulty multiplier
+  correctWeight:50, timeW:0.4, accW:0.4, speedW:0.2,
+
+  boot(){
+    // Buttons
+    document.getElementById('startBtn').onclick = ()=> this.startSequence();
+    // Answer buttons
+    for(let i=0;i<4;i++){
+      document.getElementById(`btn-${i}`).onclick = ()=> this.answer(i);
+    }
+    // Keys
+    window.addEventListener('keydown', (e)=>{
+      if(e.key.toLowerCase()==='p'){
+        if(this.running) this.togglePause();
+      }
+    });
+    // Resize-safe
+    window.addEventListener('resize', ()=>{
+      if(this.sim){ this.sim.resize(); }
+    });
+  },
+
+  async startSequence(){
+    const overlay = document.getElementById('overlay');
+    const results = document.getElementById('results');
+    const cd = document.getElementById('countdown');
+    results.style.display = 'none';
+    cd.style.display = 'block';
+    document.getElementById('startBtn').style.display = 'none';
+    cd.textContent = '3'; await this.wait(600);
+    cd.textContent = '2'; await this.wait(600);
+    cd.textContent = '1'; await this.wait(600);
+    cd.textContent = 'GO'; await this.wait(300);
+    overlay.style.display = 'none';
+    cd.style.display = 'none';
+    this.start();
+  },
+
+  wait(ms){ return new Promise(r=>setTimeout(r,ms)); },
+
+  start(){
+    this.running = true; this.paused = false;
+    this.startTime = Date.now();
+    this.stabilityScore = 100;
+    this.diffFactor = 1;
+
+    this.sim = new Simulator();
+    this.quiz = new QuizModule();
+
+    cancelAnimationFrame(this.raf);
+    const loop = ()=>{
+      if(!this.running){ return; }
+      if(!this.paused){
+        this.sim.update();
+        this.quiz.update();
+
+        // global UI timer
+        document.getElementById('ui-time').innerText = ((Date.now()-this.startTime)/1000).toFixed(1);
+
+        // compute stability (lower deviation & lower vertical speed => higher stability)
+        const centerY = this.sim.h/2;
+        const dev = Math.abs(this.sim.pos.y - centerY);
+        const vPenalty = Math.min(1, Math.abs(this.sim.vel.y)/8); // 0..1
+        // decay + add new measure
+        this.stabilityScore = Math.max(0, Math.min(100, this.stabilityScore*0.995 + (100 - (dev/(this.sim.h/2))*70 - vPenalty*30)*0.005));
+        document.getElementById('ui-stab').innerText = Math.round(this.stabilityScore);
+        document.getElementById('hud-vel').innerText = 'VEL: ' + (Math.hypot(this.sim.vel.x,this.sim.vel.y)).toFixed(2);
+        document.getElementById('hud-diff').innerText = 'DIFF: ' + this.diffFactor.toFixed(2);
+
+        // adaptive difficulty (every 10s)
+        const t = (Date.now()-this.startTime)/1000;
+        this.diffFactor = 1 + Math.min(1.2, t/50); // caps ~2.2x by 60s
+        this.sim.setDifficulty(this.diffFactor);
+        this.quiz.setDifficulty(this.diffFactor, this.quiz.getStats().acc);
+      }
+      this.raf = requestAnimationFrame(loop);
+    };
+    loop();
+  },
+
+  stop(reason='CRASH'){
+    this.running = false;
+    cancelAnimationFrame(this.raf);
+
+    const time = (Date.now() - this.startTime)/1000;
+    const {acc, react} = this.quiz.getStats();
+    // weighted score
+    const score =
+      Math.floor( (time*this.timeW*100) + (acc*this.accW*10) + ( (100 - Math.min(100,react/10))*this.speedW ) + (this.quiz.correct*this.correctWeight*0.5) + (this.stabilityScore*0.5) );
+
+    // UI result push
+    document.getElementById('r-time').innerText = time.toFixed(1)+'s';
+    document.getElementById('r-acc').innerText  = acc + '%';
+    document.getElementById('r-spd').innerText  = react + 'ms';
+    document.getElementById('r-stab').innerText = Math.round(this.stabilityScore);
+    document.getElementById('r-score').innerText= score;
+
+    const overlay = document.getElementById('overlay');
+    const results = document.getElementById('results');
+    overlay.style.display = 'flex';
+    results.style.display = 'block';
+
+    const startBtn = document.getElementById('startBtn');
+    startBtn.textContent = 'RESTART SYSTEM';
+    startBtn.style.display = 'inline-block';
+  },
+
+  togglePause(){
+    this.paused = !this.paused;
+    const overlay = document.getElementById('overlay');
+    const results = document.getElementById('results');
+    if(this.paused){
+      results.style.display = 'none';
+      overlay.style.display = 'flex';
+      document.getElementById('countdown').style.display = 'none';
+      document.getElementById('startBtn').textContent = 'RESUME';
+      document.getElementById('startBtn').style.display = 'inline-block';
+    }else{
+      overlay.style.display = 'none';
+      document.getElementById('startBtn').style.display = 'none';
+    }
+  },
+
+  answer(idx){ if(this.running && !this.paused) this.quiz.check(idx); }
+};
+
+/* --------------------------- SIMULATOR --------------------------- */
+class Simulator{
+  constructor(){
+    this.cvs = document.getElementById('simCanvas');
+    this.ctx = this.cvs.getContext('2d');
+    this.resize();
+
+    this.pos = {x: 100, y: this.h/2};
+    this.vel = {x: 0, y: 0};
+    this.friction = 0.92;
+
+    this.wallSpeed = 5;
+    this.spawnEvery = 90;
+    this.gap = 180;
+
+    this.walls = [];
+    this.particles = [];
+    this.stars = [];
+    this.frameCount = 0;
+
+    this.keys = {u:0,d:0};
+    window.onkeydown = (e)=> this.handleKey(e,1);
+    window.onkeyup   = (e)=> this.handleKey(e,0);
+
+    for(let i=0;i<50;i++){
+      this.stars.push({x: Math.random()*this.w, y: Math.random()*this.h, s: Math.random()*2+0.5});
+    }
+  }
+
+  handleKey(e,state){
+    const k = e.key.toLowerCase();
+    if(k==='w'||k==='arrowup') this.keys.u = state;
+    if(k==='s'||k==='arrowdown') this.keys.d = state;
+    if(state===1 && ['1','2','3','4'].includes(k)) app.answer(parseInt(k)-1);
+  }
+
+  resize(){
+    const rect = this.cvs.parentElement.getBoundingClientRect();
+    this.w = this.cvs.width  = Math.max(300, rect.width);
+    this.h = this.cvs.height = Math.max(300, rect.height);
+  }
+
+  setDifficulty(mult){
+    // walls speed up, gaps shrink, spawn faster
+    this.wallSpeed = 5 * mult;
+    this.gap = Math.max(110, 180 - (mult-1)*60);        // min ~110
+    this.spawnEvery = Math.max(55, 90 - Math.floor((mult-1)*35)); // min ~55
+  }
+
+  update(){
+    this.frameCount++;
+
+    // Accel (Only Y axis)
+    if(this.keys.u) this.vel.y -= 0.6;
+    if(this.keys.d) this.vel.y += 0.6;
+
+    // Friction / Drag
+    this.vel.y *= this.friction;
+
+    // Apply Move
+    this.pos.y += this.vel.y;
+
+    // BOUNDARY CHECK
+    if(this.pos.y < 0 || this.pos.y > this.h-20){
+      app.stop('BOUNDARY');
+      return;
+    }
+
+    // Spawn walls
+    if(this.frameCount % this.spawnEvery === 0){
+      const y = Math.random()*(this.h - this.gap);
+      this.walls.push({x:this.w, y:0, w:40, h:y});
+      this.walls.push({x:this.w, y:y+this.gap, w:40, h:this.h-(y+this.gap)});
+    }
+
+    // Engine particles
+    this.particles.push({x:this.pos.x, y:this.pos.y+10, vx:-4-Math.random(), vy:(Math.random()-0.5), life:1});
+
+    // Move environment
+    this.walls.forEach(w=> w.x -= this.wallSpeed);
+    this.walls = this.walls.filter(w=> w.x + w.w > 0);
+
+    this.stars.forEach(s=>{ s.x -= s.s*2; if(s.x<0){ s.x=this.w; s.y=Math.random()*this.h; } });
+
+    // Collisions
+    const pRect = {x:this.pos.x+5, y:this.pos.y+5, w:30, h:10};
+    for(const w of this.walls){
+      if(pRect.x < w.x+w.w && pRect.x+pRect.w > w.x && pRect.y < w.y+w.h && pRect.y+pRect.h > w.y){
+        app.stop('CRASH');
+        return;
+      }
+    }
+
+    this.draw();
+  }
+
+  draw(){
+    const c=this.ctx;
+    c.clearRect(0,0,this.w,this.h);
+
+    // stars
+    c.fillStyle='#555';
+    for(const s of this.stars){ c.beginPath(); c.arc(s.x,s.y,s.s,0,Math.PI*2); c.fill(); }
+
+    // particles
+    for(let i=this.particles.length-1;i>=0;i--){
+      const p=this.particles[i];
+      p.x+=p.vx; p.y+=p.vy; p.life-=0.05;
+      if(p.life<=0){ this.particles.splice(i,1); continue; }
+      c.fillStyle=`rgba(255,120,60,${p.life})`;
+      c.fillRect(p.x,p.y,4,4);
+    }
+
+    // player
+    c.save();
+    c.translate(this.pos.x+20, this.pos.y+10);
+    c.rotate(this.vel.y*0.05);
+    c.fillStyle='#ccc';
+    c.beginPath(); c.moveTo(20,0); c.lineTo(-15,8); c.lineTo(-15,-8); c.fill();
+    c.fillStyle='#fff';
+    c.beginPath(); c.moveTo(5,0); c.lineTo(-10,15); c.lineTo(-5,0); c.fill();
+    c.fillStyle='#00ffff'; c.fillRect(0,-3,8,6);
+    c.restore();
+
+    // walls
+    c.fillStyle='#333'; c.strokeStyle='#00ff41'; c.lineWidth=2;
+    for(const w of this.walls){ c.fillRect(w.x,w.y,w.w,w.h); c.strokeRect(w.x,w.y,w.w,w.h); }
+  }
+}
+
+/* --------------------------- QUIZ --------------------------- */
+class QuizModule{
+  constructor(){
+    this.correct=0; this.total=0; this.reactionSum=0;
+    this.timerMax = 8000; // ms
+    this.minTimer = 4500;
+    this.qStart=0; this.currentAns=null; this.opts=[];
+    this.mode='arith'; // type tracker
+    this.next();
+  }
+
+  setDifficulty(mult, accuracy){
+    // Lower timer a bit as difficulty rises, but protect if accuracy drops
+    const accProtect = Math.max(0.8, Math.min(1.1, (accuracy||100)/100));
+    const target = Math.max(this.minTimer, 8000 / (1 + (mult-1)*0.6) * accProtect);
+    this.timerMax = Math.round(target);
+  }
+
+  _randInt(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
+
+  genQuestion(){
+    // Rotate between: (+/−/×), min/max, simple sequence (AP)
+    const types = ['arith','minmax','seq'];
+    this.mode = types[(this.total)%types.length];
+
+    if(this.mode==='arith'){
+      const ops = ['+','-','×'];
+      const op = ops[this._randInt(0,ops.length-1)];
+      const n1 = this._randInt(5,18);
+      const n2 = op==='×' ? this._randInt(2,9) : this._randInt(2,15);
+      let ans;
+      if(op==='+') ans = n1+n2;
+      else if(op==='-') ans = n1-n2;
+      else ans = n1*n2;
+      const txt = `${n1} ${op} ${n2} = ?`;
+      return {txt, ans};
+    }
+
+    if(this.mode==='minmax'){
+      const a=this._randInt(10,50), b=this._randInt(10,50), c=this._randInt(10,50);
+      const wantMax = Math.random()<0.5;
+      const txt = `${wantMax?'MAX':'MIN'} of [${a}, ${b}, ${c}] ?`;
+      const ans = wantMax ? Math.max(a,b,c) : Math.min(a,b,c);
+      return {txt, ans};
+    }
+
+    // sequence: AP next term
+    const start=this._randInt(2,12), d=this._randInt(2,7);
+    const n3=start+2*d, n4=start+3*d, n5=start+4*d;
+    const txt = `Next in: ${start}, ${start+d}, ${n3}, ${n4}, ?`;
+    const ans = n5;
+    return {txt, ans};
+  }
+
+  next(){
+    this.qStart = Date.now();
+    const q = this.genQuestion();
+    this.currentAns = q.ans;
+
+    // build options
+    const o=[q.ans];
+    while(o.length<4){
+      let fake = q.ans + this._randInt(-9,9);
+      if(fake===q.ans) continue;
+      if(!o.includes(fake)) o.push(fake);
+    }
+    this.opts = o.sort(()=>Math.random()-0.5);
+
+    // UI
+    document.getElementById('q-display').innerText = q.txt;
+    this.opts.forEach((val,i)=>{
+      const btn = document.getElementById(`btn-${i}`);
+      btn.innerText = val;
+      btn.style.background = '#222';
+      btn.style.borderColor = '#444';
+    });
+    // Questions count
+    document.getElementById('ui-q').innerText = `${this.correct}/${this.total}`;
+  }
+
+  update(){
+    const elapsed = Date.now()-this.qStart;
+    const pct = Math.max(0, 100 - (elapsed/this.timerMax)*100);
+    const bar = document.getElementById('timer-fill');
+    bar.style.width = pct + '%';
+    bar.style.background = pct<30 ? '#ff3333' : '#00ff41';
+    if(elapsed>this.timerMax) this.check(-1);
+  }
+
+  check(idx){
+    const t = Date.now()-this.qStart;
+    this.total++;
+
+    let valid=false;
+    if(idx!==-1 && this.opts[idx]===this.currentAns){
+      valid=true; this.correct++; this.reactionSum += t;
+    }else{
+      // Miss/wrong → penalize as full-time
+      this.reactionSum += Math.max(this.timerMax, 8000);
+    }
+
+    if(idx!==-1){
+      const btn=document.getElementById(`btn-${idx}`);
+      btn.style.background = valid ? '#006400' : '#8B0000';
+      btn.style.borderColor = valid ? '#00ff41' : '#ff0000';
+    }
+
+    const acc = this.total===0 ? 100 : Math.round((this.correct/this.total)*100);
+    document.getElementById('ui-acc').innerText = acc + '%';
+    document.getElementById('ui-q').innerText = `${this.correct}/${this.total}`;
+
+    setTimeout(()=> this.next(), 220);
+  }
+
+  getStats(){
+    const acc = this.total===0 ? 100 : Math.round((this.correct/this.total)*100);
+    const react = this.total===0 ? 0 : Math.round(this.reactionSum/this.total);
+    return {acc, react};
+  }
+}
+
+/* --------------------------- BOOT --------------------------- */
+app.boot();
+</script>
+</body>
+</html>
