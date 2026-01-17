@@ -141,7 +141,7 @@ const Info = styled.div`
 /* ---------- component ---------- */
 export default function Navbar() {
   const navigate = useNavigate();
-  const programNumbers = [1, 2, 3]; // extend as you add programs
+  const programNumbers = [1, 2, 3, 4]; // extend as you add programs
 
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
