@@ -9,8 +9,6 @@ import program1 from "../programs/program1";
 import program2 from "../programs/program2";
 import program3 from "../programs/program3";
 import program4 from "../programs/program4";
-import program5 from "../programs/program5";
-import program6 from "../programs/program6";
 
 /* ---------------- Registry ---------------- */
 const allPrograms = { 1: program1, 2: program2, 3: program3, 4: program4};
