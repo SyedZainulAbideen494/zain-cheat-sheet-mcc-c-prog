@@ -8,7 +8,6 @@ const fadeSlide = keyframes`
   0% { opacity: 0; transform: translateY(-8px) scale(.98); }
   100% { opacity: 1; transform: translateY(0) scale(1); }
 `;
-const pop = keyframes`from { transform: scale(.98); } to { transform: scale(1); }`;
 
 /* ---------- styles ---------- */
 const Bar = styled.nav`
