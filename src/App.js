@@ -2,23 +2,28 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const MESSAGES = [
-  "Attendance successfully avoided. Your parents are proud.",
-  "DSA logic: O(n) complexity, O(0) brain activity.",
-  "Error 404: Career ambition not found.",
-  "Copied from GitHub. Still doesn't run. Impressive.",
-  "You learned nothing today. Maximum efficiency reached.",
-  "Reel scrolled. Productivity buried.",
-  "A degree is just a very expensive receipt.",
-  "Future CEO of 'Checking the Fridge' repeatedly."
+  "Attendance successfully avoided. Again. Consistency matters.",
+  "DSA logic understood in theory. Brain chose not to participate.",
+  "Opened the program, stared at it, closed it. Progress.",
+  "Copied the code. Trusted the process. It betrayed you.",
+  "You learned nothing today, but you were very comfortable doing it.",
+  "Scrolled one reel. Accidentally watched twelve.",
+  "This degree is slowly becoming a very expensive habit.",
+  "Future plan: survive college first, decide later."
 ];
 
+
 const DS_ROASTS = [
-  "Your Linked List is just a chain of bad decisions.",
-  "If you can scroll Insta for 4 hours, you can write a loop lazy kid.",
-  "Stack Overflow is tired of carrying your GPA.",
-  "The code isn't the problem. The user is.",
-  "Binary Search for your dignity... 404 Not Found."
+  "Lazy kid, write the code. Your fingers still work.",
+  "No copy today. Brain usage required.",
+  "If you can scroll reels, you can write this. Don’t act helpless.",
+  "Open the editor. Start typing. Stop negotiating.",
+  "This program won’t write itself. Sadly.",
+  "You know this. You’re just being lazy right now.",
+  "Five lines in and you’ll be fine. Probably.",
+  "Nice try. Now go write the code."
 ];
+
 
 const STATS = [
   { label: "Academic Willpower", value: "2%", note: "Extinct species", width: "2%" },
